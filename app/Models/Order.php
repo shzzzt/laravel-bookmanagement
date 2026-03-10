@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Order extends Model
 {
     use HasFactory;
-    
-    protected $fillable = ['user_id', 'total_amount', 'status'];
+
+    protected $fillable = ['user_id', 'total_amount', 'shipping_address', 'status'];
 
     public function user()
     {

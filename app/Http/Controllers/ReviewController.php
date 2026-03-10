@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Book;
 use App\Models\Review;
 
@@ -14,7 +15,10 @@ class ReviewController extends Controller
     public function index()
     {
         // For admin to view all reviews
-        if (!auth()->user()->isAdmin()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::guard('web')->user();
+
+        if (!$user || !$user->isAdmin()) {
             abort(403);
         }
         
@@ -38,16 +42,23 @@ class ReviewController extends Controller
      */
     public function store(Request $request, Book $book)
     {
+        $user = $request->user();
+
+        if (!$user || !$user->hasOrderedBook($book->id)) {
+            return redirect()->route('books.show', $book)
+                ->with('error', 'You can only review books that you have ordered.');
+        }
+
          $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
         ]);
         
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = $user->id;
         $validated['book_id'] = $book->id;
         
         // Check if user already reviewed this book
-        $existingReview = Review::where('user_id', auth()->id())
+        $existingReview = Review::where('user_id', $user->id)
             ->where('book_id', $book->id)
             ->first();
         
@@ -66,7 +77,7 @@ class ReviewController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Review $review)
     {
         $review->load(['user', 'book']);
         return view('reviews.show', compact('review'));
@@ -94,7 +105,10 @@ class ReviewController extends Controller
     public function destroy(Review $review)
     {
         // Only allow owner or admin to delete
-        if (auth()->id() !== $review->user_id && !auth()->user()->isAdmin()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::guard('web')->user();
+
+        if (!$user || ($user->id !== $review->user_id && !$user->isAdmin())) {
             abort(403);
         }
         

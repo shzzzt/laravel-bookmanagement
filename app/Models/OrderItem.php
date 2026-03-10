@@ -27,7 +27,7 @@ class OrderItem extends Model
     // Accessor for subtotal
     public function getSubtotalAttribute()
     {
-        return $this->quantity * $this->unit_price;
+        return $this->quantity * $this->unit_price; //quantity came from the order item and unit price is the price of the book at the time of order
     }
 }
 

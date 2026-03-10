@@ -1,29 +1,26 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('title', 'Profile - PageTurner')
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+@section('content')
+<div class="max-w-5xl mx-auto py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Profile Settings</h1>
+        <p class="text-gray-600 mt-1">Manage your account details and security settings.</p>
+    </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
+    <div class="space-y-6">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            @include('profile.partials.update-profile-information-form')
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            @include('profile.partials.update-password-form')
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            @include('profile.partials.delete-user-form')
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

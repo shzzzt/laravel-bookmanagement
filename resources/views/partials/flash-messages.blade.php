@@ -1,39 +1,48 @@
 @if(session('success'))
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="rounded-lg p-4 mb-4" style="background-color: rgba(168, 216, 234, 0.15); border-left: 4px solid var(--pastel-blue);">
-            <div class="flex">
-                <span style="color: var(--pastel-blue-dark); font-weight: 600;">✓</span>
-                <p class="ml-3" style="color: var(--dark-text);">{{ session('success') }}</p>
-            </div>
+<div class="container mx-auto px-4 mb-6 animate-fade-in">
+    <div class="bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-sm">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle text-green-500 mr-3 text-lg"></i>
+            <span class="font-medium">{{ session('success') }}</span>
         </div>
     </div>
+</div>
 @endif
 
 @if(session('error'))
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="rounded-lg p-4 mb-4" style="background-color: rgba(255, 107, 107, 0.15); border-left: 4px solid #FF6B6B;">
-            <div class="flex">
-                <span style="color: #FF6B6B; font-weight: 600;">✗</span>
-                <p class="ml-3" style="color: var(--dark-text);">{{ session('error') }}</p>
-            </div>
+<div class="container mx-auto px-4 mb-6 animate-fade-in">
+    <div class="bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-sm">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-circle text-red-500 mr-3 text-lg"></i>
+            <span class="font-medium">{{ session('error') }}</span>
         </div>
     </div>
+</div>
+@endif
+
+@if(session('warning'))
+<div class="container mx-auto px-4 mb-6 animate-fade-in">
+    <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg shadow-sm">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle text-yellow-500 mr-3 text-lg"></i>
+            <span class="font-medium">{{ session('warning') }}</span>
+        </div>
+    </div>
+</div>
 @endif
 
 @if($errors->any())
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="rounded-lg p-4 mb-4" style="background-color: rgba(255, 107, 107, 0.15); border-left: 4px solid #FF6B6B;">
-            <div class="flex">
-                <span style="color: #FF6B6B; font-weight: 600;">⚠</span>
-                <div class="ml-3">
-                    <p style="color: var(--dark-text); font-weight: 600; margin-bottom: 8px;">Validation Errors:</p>
-                    <ul style="color: var(--dark-text); margin-left: 20px;">
-                        @foreach($errors->all() as $error)
-                            <li style="list-style-type: disc;">{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
+<div class="container mx-auto px-4 mb-6 animate-fade-in">
+    <div class="bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-sm">
+        <div class="flex items-center mb-2">
+            <i class="fas fa-times-circle text-red-500 mr-3 text-lg"></i>
+            <span class="font-medium">Please fix the following errors:</span>
         </div>
+        <ul class="list-disc list-inside ml-8 space-y-1">
+            @foreach($errors->all() as $error)
+                <li class="text-sm">{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
+</div>
 @endif

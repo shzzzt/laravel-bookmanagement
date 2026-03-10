@@ -95,7 +95,7 @@
                     
                     <div>
                         <label for="price" class="block font-bold mb-2" style="color: var(--dark-text);">
-                            Price ($) *
+                            Price (₱) *
                         </label>
                         <input 
                             type="number" 

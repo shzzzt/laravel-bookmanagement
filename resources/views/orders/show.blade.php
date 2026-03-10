@@ -1,102 +1,44 @@
 @extends('layouts.app')
 
-@section('title', 'My Orders - PageTurner')
-
-@section('header')
-    <h1 class="text-4xl font-bold">📋 My Orders</h1>
-    <p class="mt-2" style="color: var(--light-text);">View and manage your orders</p>
-@endsection
+@section('title', 'Order Details - PageTurner')
 
 @section('content')
-    @if($orders->count() > 0)
-        <div class="space-y-4 mb-8">
-            @foreach($orders as $order)
-                <div class="card">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start mb-4">
-                        <!-- Order ID -->
-                        <div>
-                            <p class="text-sm" style="color: var(--light-text);">Order #</p>
-                            <p class="text-2xl font-bold" style="color: var(--dark-text);">
-                                #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
-                            </p>
-                        </div>
-                        
-                        <!-- Date -->
-                        <div>
-                            <p class="text-sm" style="color: var(--light-text);">Date</p>
-                            <p class="font-bold" style="color: var(--dark-text);">
-                                {{ $order->created_at->format('M d, Y') }}
-                            </p>
-                            <p class="text-xs" style="color: var(--light-text);">
-                                {{ $order->created_at->format('h:i A') }}
-                            </p>
-                        </div>
-                        
-                        <!-- Amount -->
-                        <div>
-                            <p class="text-sm" style="color: var(--light-text);">Total</p>
-                            <p class="text-2xl font-bold" style="color: var(--pastel-blue-dark);">
-                                ${{ number_format($order->total_amount, 2) }}
-                            </p>
-                        </div>
-                        
-                        <!-- Status -->
-                        <div>
-                            <p class="text-sm" style="color: var(--light-text);">Status</p>
-                            @php
-                                $statusColors = [
-                                    'pending' => 'badge-yellow',
-                                    'processing' => 'badge-blue',
-                                    'completed' => 'badge-blue',
-                                    'cancelled' => 'badge-yellow',
-                                ];
-                            @endphp
-                            <div class="{{ $statusColors[$order->status] ?? 'badge-blue' }} inline-block capitalize mt-1">
-                                {{ ucfirst($order->status) }}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Items Preview -->
-                    <div class="border-t pt-4 mb-4" style="border-color: var(--pastel-blue);">
-                        <p class="text-sm font-bold mb-2" style="color: var(--dark-text);">Items ({{ $order->orderItems->count() }})</p>
-                        <div class="space-y-2">
-                            @foreach($order->orderItems->take(2) as $item)
-                                <p class="text-sm" style="color: var(--light-text);">
-                                    {{ $item->book->title }} 
-                                    <span style="color: var(--dark-text); font-weight: 600;">
-                                        × {{ $item->quantity }}
-                                    </span>
-                                </p>
-                            @endforeach
-                            @if($order->orderItems->count() > 2)
-                                <p class="text-sm" style="color: var(--light-text);">
-                                    ... and {{ $order->orderItems->count() - 2 }} more
-                                </p>
-                            @endif
-                        </div>
-                    </div>
-                    
-                    <!-- View Details Button -->
-                    <a href="{{ route('orders.show', $order) }}" class="btn-primary inline-block">
-                        View Details
-                    </a>
-                </div>
-            @endforeach
+<div class="max-w-4xl mx-auto bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Order #{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</h1>
+            <p class="text-sm text-gray-500">Placed on {{ $order->created_at->format('M d, Y h:i A') }}</p>
         </div>
-        
-        <!-- Pagination -->
-        <div class="flex justify-center">
-            {{ $orders->links() }}
+        <div class="text-right">
+            <p class="text-sm text-gray-500">Status</p>
+            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium capitalize {{ $order->status === 'completed' ? 'bg-green-100 text-green-700' : ($order->status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                {{ $order->status }}
+            </span>
         </div>
-    @else
-        <div class="card text-center py-16">
-            <p class="text-xl mb-4" style="color: var(--light-text);">
-                You haven't placed any orders yet.
-            </p>
-            <a href="{{ route('books.index') }}" class="btn-primary">
-                Start Shopping
-            </a>
+    </div>
+
+    <div class="border-t border-gray-100 pt-4 space-y-4">
+        @if($order->shipping_address)
+        <div class="bg-gray-50 border border-gray-100 rounded-lg p-4">
+            <p class="text-xs uppercase tracking-wide text-gray-500 mb-1">Delivery Address</p>
+            <p class="text-sm text-gray-700 whitespace-pre-line">{{ $order->shipping_address }}</p>
         </div>
-    @endif
+        @endif
+
+        @foreach($order->orderItems as $item)
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="font-semibold text-gray-800">{{ $item->book->title }}</p>
+                <p class="text-sm text-gray-500">Qty: {{ $item->quantity }} × ₱{{ number_format($item->unit_price, 2) }}</p>
+            </div>
+            <p class="font-bold text-accent-blue">₱{{ number_format($item->subtotal, 2) }}</p>
+        </div>
+        @endforeach
+    </div>
+
+    <div class="border-t border-gray-100 mt-6 pt-4 flex items-center justify-between">
+        <a href="{{ route('orders.index') }}" class="text-sm text-accent-blue hover:underline">← Back to My Orders</a>
+        <p class="text-xl font-bold text-gray-800">Total: ₱{{ number_format($order->total_amount, 2) }}</p>
+    </div>
+</div>
 @endsection

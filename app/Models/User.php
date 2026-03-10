@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'address',
         'password',
         'role',
     ];
@@ -58,8 +59,18 @@ class User extends Authenticatable
     }
 
     // Helper method
-    public function isAdmin()
+    public function isAdmin() //check if the user has an admin role
     {
         return $this->role === 'admin';
+    }
+
+    public function hasOrderedBook(int $bookId): bool
+    {
+        return $this->orders()
+            ->whereIn('status', ['pending', 'completed'])
+            ->whereHas('orderItems', function ($query) use ($bookId) {
+                $query->where('book_id', $bookId);
+            })
+            ->exists();
     }
 }
